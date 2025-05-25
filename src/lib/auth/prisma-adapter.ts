@@ -8,7 +8,7 @@ export function PrismaAdapter(
   res: NextApiResponse
 ): Adapter {
   return {
-    async createUser(user: User) {
+    async createUser(user: any) {
       const { "@ignitecall:userId": userIdOnCookies } = parseCookies({ req });
 
       if (!userIdOnCookies) {
@@ -82,15 +82,14 @@ export function PrismaAdapter(
     },
     async getUserByAccount({ providerAccountId, provider }) {
       const account = await prisma.account.findFirst({
-  where: {
-    provider,
-    provider_account_id: providerAccountId,
-  },
-  include: {
-    user: true,
-  },
-});
-
+        where: {
+          provider,
+          provider_account_id: providerAccountId,
+        },
+        include: {
+          user: true,
+        },
+      });
 
       if (!account) {
         return null;
@@ -130,7 +129,7 @@ export function PrismaAdapter(
       };
     },
 
-    async linkAccount(account) {
+    async linkAccount(account: any) {
       await prisma.account.create({
         data: {
           user_id: account.userId,
