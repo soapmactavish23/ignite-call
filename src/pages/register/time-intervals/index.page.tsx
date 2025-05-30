@@ -10,6 +10,8 @@ import {
 import { ArrowRight } from "phosphor-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { api } from "../../../lib/axios";
+import { convertTimeStringToMinutes } from "../../../utils/convert-time-string-to-minutes";
 import { getWeekDays } from "../../../utils/get-week-days";
 import { Container, Header } from "../styles";
 
@@ -21,7 +23,6 @@ import {
   IntervalInputs,
   IntervalItem,
 } from "./styles";
-import { convertTimeStringToMinutes } from "@/utils/convert-time-string-to-minutes";
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -96,9 +97,11 @@ export default function TimeIntervals() {
   const intervals = watch("intervals");
 
   async function handleSetTimeIntervals(data: any) {
-    const formData = data as TimeIntervalsFormOutput;
+    const { intervals } = data as TimeIntervalsFormOutput;
 
-    console.log(formData);
+    await api.post("/users/time-intervals", {
+      intervals,
+    });
   }
 
   return (
@@ -125,7 +128,7 @@ export default function TimeIntervals() {
                     render={({ field }) => {
                       return (
                         <Checkbox
-                          onCheckedChange={(checked: boolean) =>
+                          onCheckedChange={(checked) =>
                             field.onChange(checked === true)
                           }
                           checked={field.value}
@@ -157,7 +160,7 @@ export default function TimeIntervals() {
         </IntervalContainer>
 
         {errors.intervals && (
-          <FormError size="sm">{errors.intervals.root?.message}</FormError>
+          <FormError size="sm">{errors.intervals.message}</FormError>
         )}
 
         <Button type="submit" disabled={isSubmitting}>
