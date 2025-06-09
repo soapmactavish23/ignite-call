@@ -1,8 +1,26 @@
 import { Calendar } from "@/components/Calendar";
-import { Container, TimePicker, TimePickerHeader, TimePickerItem, TimePickerList } from "./styles";
+import {
+  Container,
+  TimePicker,
+  TimePickerHeader,
+  TimePickerItem,
+  TimePickerList,
+} from "./styles";
+import { useState } from "react";
+import dayjs from "dayjs";
+import { getWeekDays } from "@/utils/get-week-days";
 
 export function CalendarStep() {
-  const isDateSelected = true;
+  const [currentDate, setCurrentDate] = useState(() => {
+    return dayjs().set("date", 1);
+  });
+
+  const shortWeekDays = getWeekDays({ short: true });
+
+  const currentMonth = currentDate.format("MMMM");
+  const currentYear = currentDate.format('YYYY')
+
+  const isDateSelected = false;
 
   return (
     <Container isTimePickerOpen={isDateSelected}>
