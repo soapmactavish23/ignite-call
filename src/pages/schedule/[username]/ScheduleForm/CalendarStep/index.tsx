@@ -11,20 +11,13 @@ import dayjs from "dayjs";
 import { getWeekDays } from "@/utils/get-week-days";
 
 export function CalendarStep() {
-  const [currentDate, setCurrentDate] = useState(() => {
-    return dayjs().set("date", 1);
-  });
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  const shortWeekDays = getWeekDays({ short: true });
-
-  const currentMonth = currentDate.format("MMMM");
-  const currentYear = currentDate.format('YYYY')
-
-  const isDateSelected = false;
+  const isDateSelected = !!selectedDate;
 
   return (
     <Container isTimePickerOpen={isDateSelected}>
-      <Calendar />
+      <Calendar selectedDate={selectedDate} onDateSelected={setSelectedDate} />
 
       {isDateSelected && (
         <TimePicker>
