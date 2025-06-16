@@ -6,7 +6,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method !== "GET") {
     return res.status(405).end();
   }
 
@@ -56,5 +56,21 @@ export default async function handle(
     }
   );
 
-  return res.json({ possibleTimes });
+  const blockedTimes = await prisma.scheduling.findMany({
+    where: {
+      user_id: user.id,
+      date: {
+        gte: referenceDate.set("hour", startHour).toDate(),
+        lte: referenceDate.set("hour", endHour).toDate(),
+      },
+    },
+  });
+
+  const availableTimes = possibleTimes.filter((time) => {
+    return !blockedTimes.some(
+      (blockedTime) => blockedTime.date.getHours() === time
+    );
+  });
+
+  return res.json({ possibleTimes, availableTimes });
 }
